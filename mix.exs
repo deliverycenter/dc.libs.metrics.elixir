@@ -21,7 +21,8 @@ defmodule DCMetrics.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:grpc, "~> 0.3.1"}
+      {:grpc, "~> 0.3.1"},
+      {:poison, "~> 4.0"}
     ]
   end
 end

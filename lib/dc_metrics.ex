@@ -4,6 +4,8 @@ defmodule DCMetrics do
   alias Logging.Deliverycenter.Integration.V1.WriteMetricsRequest
   alias Logging.Deliverycenter.Integration.V1.MetricsService.Stub, as: MetricsStub
 
+  alias DCMetrics.BaseModel
+
   @grpc_url Application.fetch_env!(:dc_metrics, :grpc_url)
   @caller Application.fetch_env!(:dc_metrics, :caller)
   @env Application.fetch_env!(:dc_metrics, :env)
@@ -22,37 +24,37 @@ defmodule DCMetrics do
 
   def log(_, _), do: :ok
 
-  defp log_to_stdout(%{} = base_model) do
+  defp log_to_stdout(%BaseModel{} = base_model) do
     base_model
     |> build_stdout_payload()
     |> Poison.encode!()
     |> IO.puts()
   end
 
-  defp log_to_metrics(%{} = base_model) do
+  defp log_to_metrics(%BaseModel{} = base_model) do
     base_model
     |> build_metrics_payload()
     |> WriteMetricsRequest.new()
     |> make_metrics_request()
   end
 
-  defp build_stdout_payload(%{} = base_model) do
+  defp build_stdout_payload(%BaseModel{} = base_model) do
     %{
-      message: base_model[:message],
-      severity: base_model[:level],
+      message: base_model.message,
+      severity: base_model.level,
       modelLog: base_model
     }
   end
 
-  defp build_metrics_payload(%{} = base_model) do
+  defp build_metrics_payload(%BaseModel{} = base_model) do
     %{
       base_model
-    | create_timestamp: to_google_timestamp(base_model[:create_timestamp])
+      | create_timestamp: to_google_timestamp(base_model.create_timestamp)
     }
   end
 
   defp build_base_model(message, metadata) do
-    %{
+    %BaseModel{
       message: message,
       caller: @caller,
       environment: enviroment_map(),
@@ -111,6 +113,7 @@ defmodule DCMetrics do
       :staging -> "STAGING"
       :sandbox -> "SANDBOX"
       :dev -> "DEVELOPMENT"
+      :test -> "TEST"
     end
   end
 end
