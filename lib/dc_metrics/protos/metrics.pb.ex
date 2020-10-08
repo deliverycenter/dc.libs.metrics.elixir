@@ -47,33 +47,35 @@ defmodule Logging.Deliverycenter.Integration.V1.WriteMetricsRequest do
     :error_code
   ]
 
-  field :correlation_id, 1, type: :string
-  field :environment, 2, type: :string
-  field :level, 3, type: :string
-  field :direction, 4, type: :string
-  field :source_type, 5, type: :string
-  field :source_name, 6, type: :string
-  field :caller, 7, type: :string
-  field :action, 8, type: :string
-  field :create_timestamp, 9, type: Google.Protobuf.Timestamp
-  field :duration_ms, 10, type: :int32
-  field :root_resource_type, 11, type: :string
-  field :ext_root_resource_id, 12, type: :string
-  field :int_root_resource_id, 13, type: :string
-  field :child_resource_type, 14, type: :string
-  field :child_resource_id, 15, type: :string
-  field :ext_store_id, 16, type: :string
-  field :int_store_id, 17, type: :string
-  field :error_code, 18, type: :string
+  field(:correlation_id, 1, type: :string)
+  field(:environment, 2, type: :string)
+  field(:level, 3, type: :string)
+  field(:direction, 4, type: :string)
+  field(:source_type, 5, type: :string)
+  field(:source_name, 6, type: :string)
+  field(:caller, 7, type: :string)
+  field(:action, 8, type: :string)
+  field(:create_timestamp, 9, type: Google.Protobuf.Timestamp)
+  field(:duration_ms, 10, type: :int32)
+  field(:root_resource_type, 11, type: :string)
+  field(:ext_root_resource_id, 12, type: :string)
+  field(:int_root_resource_id, 13, type: :string)
+  field(:child_resource_type, 14, type: :string)
+  field(:child_resource_id, 15, type: :string)
+  field(:ext_store_id, 16, type: :string)
+  field(:int_store_id, 17, type: :string)
+  field(:error_code, 18, type: :string)
 end
 
 defmodule Logging.Deliverycenter.Integration.V1.MetricsService.Service do
   @moduledoc false
   use GRPC.Service, name: "logging.deliverycenter.integration.v1.MetricsService"
 
-  rpc :WriteMetrics,
-      Logging.Deliverycenter.Integration.V1.WriteMetricsRequest,
-      Google.Protobuf.Empty
+  rpc(
+    :WriteMetrics,
+    Logging.Deliverycenter.Integration.V1.WriteMetricsRequest,
+    Google.Protobuf.Empty
+  )
 end
 
 defmodule Logging.Deliverycenter.Integration.V1.MetricsService.Stub do
