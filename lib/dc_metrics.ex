@@ -1,4 +1,4 @@
-defmodule DcMetrics do
+defmodule DCMetrics do
   require Logger
 
   alias Logging.Deliverycenter.Integration.V1.WriteMetricsRequest

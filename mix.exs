@@ -1,4 +1,4 @@
-defmodule DcMetrics.MixProject do
+defmodule DCMetrics.MixProject do
   use Mix.Project
 
   def project do

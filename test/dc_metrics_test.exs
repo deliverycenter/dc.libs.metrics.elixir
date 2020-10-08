@@ -1,8 +1,8 @@
-defmodule DcMetricsTest do
+defmodule DCMetricsTest do
   use ExUnit.Case
-  doctest DcMetrics
+  doctest DCMetrics
 
   test "greets the world" do
-    assert DcMetrics.hello() == :world
+    assert DCMetrics.hello() == :world
   end
 end
