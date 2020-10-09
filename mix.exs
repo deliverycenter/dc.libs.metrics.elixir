@@ -22,7 +22,7 @@ defmodule DCMetrics.MixProject do
   defp deps do
     [
       {:grpc, "~> 0.3.1"},
-      {:poison, "~> 4.0"}
+      {:jason, "~> 1.2"}
     ]
   end
 end

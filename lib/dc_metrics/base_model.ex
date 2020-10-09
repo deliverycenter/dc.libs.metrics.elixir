@@ -1,4 +1,5 @@
 defmodule DCMetrics.BaseModel do
+  @derive Jason.Encoder
   defstruct [
     :message,
     :caller,

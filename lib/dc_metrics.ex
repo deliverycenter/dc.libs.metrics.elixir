@@ -94,7 +94,7 @@ defmodule DCMetrics do
   defp log_to_stdout(%BaseModel{} = base_model) do
     base_model
     |> build_stdout_payload()
-    |> Poison.encode!()
+    |> Jason.encode!()
     |> IO.puts()
   end
 
