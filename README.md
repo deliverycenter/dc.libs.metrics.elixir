@@ -3,7 +3,9 @@
 Elixir implementation for DeliveryCenter's structured logging format.
 
 > This package is part of a family of libraries that implement DeliveryCenter's metrics pattern  for different languages. 
-Check also the Golang, Node and Ruby versions.
+Check also our [Golang](https://github.com/deliverycenter/dc.libs.metrics.golang), 
+>[Node](https://github.com/deliverycenter/dc.libs.metrics.node) and 
+>[Ruby](https://github.com/deliverycenter/dc.libs.metrics.ruby) versions.
 
 Full documentation can be found at TBD.
 
