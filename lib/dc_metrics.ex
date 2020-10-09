@@ -123,7 +123,7 @@ defmodule DCMetrics do
 
   defp build_base_model(level, message, metadata) do
     %BaseModel{
-      level: level,
+      level: level |> to_string() |> String.upcase(),
       message: message,
       caller: @caller,
       environment: enviroment_map(),
