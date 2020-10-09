@@ -101,6 +101,7 @@ defmodule DCMetrics do
   defp log_to_metrics(%BaseModel{} = base_model) do
     base_model
     |> build_metrics_payload()
+    |> Map.from_struct()
     |> WriteMetricsRequest.new()
     |> make_metrics_request()
   end
