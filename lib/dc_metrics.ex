@@ -1,4 +1,42 @@
 defmodule DCMetrics do
+  @moduledoc """
+  Elixir implementation for DeliveryCenter's structured logging format.
+
+  By default, all events will be logged to:
+
+  - Stdout, as a [Google Cloud Platform structured log](https://cloud.google.com/logging/docs/structured-logging)
+  - Metrics API, using gRPC + Protobuf
+
+  ## Levels
+
+  The supported levels are:
+
+    * `:error` - for errors
+    * `:warn` - for warnings
+    * `:info` - for information of any kind
+    * `:debug` - for debug-related messages
+
+  ## Metadata
+
+  All log operations take a argument `metadata`, which should contain all fields to be sent as a metric. The list of
+  fields and its descriptions can be found at the Confluence documentation page.
+
+  ### Runtime Configuration
+
+  All configuration below must be set via config files (such as
+  `config/config.exs`) and cannot be changed during runtime.
+
+    * `:grpc_url` - URL to the Metrics API gRPC. This may vary between environments. You can find the possible values
+      in the centralized docs.
+
+    * `:caller` - name of the application using the lib, in uppercase. Ex.: "WAREHOUSE"
+
+    * `:env` - environment of the application `(:prod, :staging, :sandbox, :dev, or :test)`. Defaults to `Mix.env()`.
+
+    * `:disabled` - true if you want to disable the lib's functionality. Might be useful to disable it in tests, for
+      example.
+
+  """
   require Logger
 
   alias Logging.Deliverycenter.Integration.V1.WriteMetricsRequest
@@ -8,12 +46,43 @@ defmodule DCMetrics do
 
   @grpc_url Application.fetch_env!(:dc_metrics, :grpc_url)
   @caller Application.fetch_env!(:dc_metrics, :caller)
-  @env Application.fetch_env!(:dc_metrics, :env)
+  @env Application.get_env(:dc_metrics, :env, Mix.env())
+  @disabled Application.get_env(:dc_metrics, :disabled, Mix.env())
+  @log_levels [:error, :warn, :info, :debug]
+
+  @type level :: :error | :warn | :info | :debug
+  @type message :: String.t()
+  @type metadata :: keyword()
 
   @doc """
-  Logs an event as a GCP formatted stdout and send it to the Metrics API
+  Logs an event at level DEBUG
   """
-  def log(message, metadata) when @env != :test do
+  @spec debug(message, metadata) :: :ok
+  def debug(message, metadata), do: log(:debug, message, metadata)
+
+  @doc """
+  Logs an event at level INFO
+  """
+  @spec info(message, metadata) :: :ok
+  def info(message, metadata), do: log(:info, message, metadata)
+
+  @doc """
+  Logs an event at level WARN
+  """
+  @spec warn(message, metadata) :: :ok
+  def warn(message, metadata), do: log(:warn, message, metadata)
+
+  @doc """
+  Logs an event at level ERROR
+  """
+  @spec error(message, metadata) :: :ok
+  def error(message, metadata), do: log(:error, message, metadata)
+
+  @doc """
+  Logs an event with the given level
+  """
+  @spec log(level, message, metadata) :: :ok
+  def log(level, message, metadata) when level in @log_levels do
     base_model = build_base_model(message, metadata)
 
     log_to_stdout(base_model)
@@ -21,8 +90,6 @@ defmodule DCMetrics do
 
     :ok
   end
-
-  def log(_, _), do: :ok
 
   defp log_to_stdout(%BaseModel{} = base_model) do
     base_model

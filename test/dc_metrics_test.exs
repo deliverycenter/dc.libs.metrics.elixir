@@ -3,6 +3,6 @@ defmodule DCMetricsTest do
   doctest DCMetrics
 
   test "greets the world" do
-    assert DCMetrics.log("message", []) == :ok
+    assert DCMetrics.log(:info, "message", []) == :ok
   end
 end

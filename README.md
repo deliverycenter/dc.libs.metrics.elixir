@@ -2,9 +2,10 @@
 
 Elixir implementation for DeliveryCenter's structured logging format.
 
-The details of the logging strategy and fields descriptions that are applied to all packages of this family 
-can be found in the [Confluence page](https://deliverycenterbr.atlassian.net/wiki/spaces/SP/pages/755630096/Observabilidade+do+ecossistema+DC)
-(private). Docs of this package will focus on the details of the *Elixir* implementation.   
+> This package is part of a family of libraries that implement DeliveryCenter's metrics pattern  for different languages. 
+Check also the Golang, Node and Ruby versions.
+
+Full documentation can be found at TBD.
 
 ## Installation
 
@@ -32,7 +33,7 @@ config :dc_metrics,
 Then, to log an event
 
 ```elixir
-DCTracing.log("Product created with success",
+DCTracing.info("Product created with success",
   action: "CREATE_PRODUCT",
   direction: "INCOMING",
   source_type: "PROVIDER",
@@ -43,3 +44,5 @@ DCTracing.log("Product created with success",
   int_store_id: 100
 )
 ```
+
+Full documentation can be found at TBD.
