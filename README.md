@@ -1,4 +1,4 @@
-# dc.libs.metrics.golang
+# dc.libs.metrics.elixir
 
 Elixir implementation for DeliveryCenter's structured logging format.
 
