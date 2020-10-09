@@ -44,10 +44,6 @@ defmodule DCMetrics do
 
   alias DCMetrics.BaseModel
 
-  @grpc_url Application.fetch_env!(:dc_metrics, :grpc_url)
-  @caller Application.fetch_env!(:dc_metrics, :caller)
-  @env Application.get_env(:dc_metrics, :env, Mix.env())
-  @disabled Application.get_env(:dc_metrics, :disabled, Mix.env())
   @log_levels [:error, :warn, :info, :debug]
 
   @type level :: :error | :warn | :info | :debug
@@ -125,8 +121,8 @@ defmodule DCMetrics do
     %BaseModel{
       level: level |> to_string() |> String.upcase(),
       message: message,
-      caller: @caller,
-      environment: enviroment_map(),
+      caller: caller(),
+      environment: enviroment(),
       correlation_id: build_correlation_id(metadata),
       create_timestamp: :os.system_time(:nanosecond),
       action: metadata[:action],
@@ -159,7 +155,7 @@ defmodule DCMetrics do
   defp make_metrics_request(%WriteMetricsRequest{} = request) do
     Task.start(fn ->
       try do
-        with {:ok, channel} <- GRPC.Stub.connect(@grpc_url),
+        with {:ok, channel} <- GRPC.Stub.connect(grpc_url()),
              {:ok, response} <- MetricsStub.write_metrics(channel, request) do
           {:ok, response}
         else
@@ -178,13 +174,21 @@ defmodule DCMetrics do
     }
   end
 
-  defp enviroment_map do
-    case @env do
+  defp enviroment() do
+    case Application.get_env(:dc_metrics, :env, Mix.env()) do
       :prod -> "PRODUCTION"
       :staging -> "STAGING"
       :sandbox -> "SANDBOX"
       :dev -> "DEVELOPMENT"
       :test -> "TEST"
     end
+  end
+
+  defp grpc_url() do
+    Application.fetch_env!(:dc_metrics, :grpc_url)
+  end
+
+  defp caller() do
+    Application.fetch_env!(:dc_metrics, :caller)
   end
 end
