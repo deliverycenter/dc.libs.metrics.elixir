@@ -147,9 +147,12 @@ defmodule DCMetrics do
   end
 
   defp build_correlation_id(metadata) do
-    metadata
-    |> Keyword.take([:source_type, :source_name, :ext_root_resource_id, :int_store_id])
-    |> Keyword.values()
+    [
+      metadata[:source_type],
+      metadata[:source_name],
+      metadata[:ext_root_resource_id],
+      metadata[:int_root_resource_id]
+    ]
     |> Enum.join("-")
   end
 
