@@ -83,7 +83,7 @@ defmodule DCMetrics do
   """
   @spec log(level, message, metadata) :: :ok
   def log(level, message, metadata) when level in @log_levels do
-    base_model = build_base_model(message, metadata)
+    base_model = build_base_model(level, message, metadata)
 
     log_to_stdout(base_model)
     log_to_metrics(base_model)
@@ -120,15 +120,15 @@ defmodule DCMetrics do
     }
   end
 
-  defp build_base_model(message, metadata) do
+  defp build_base_model(level, message, metadata) do
     %BaseModel{
+      level: level,
       message: message,
       caller: @caller,
       environment: enviroment_map(),
       correlation_id: build_correlation_id(metadata),
       create_timestamp: :os.system_time(:nanosecond),
       action: metadata[:action],
-      level: metadata[:level] || "INFO",
       direction: metadata[:direction],
       source_type: metadata[:source_type],
       source_name: metadata[:source_name],
