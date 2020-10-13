@@ -31,7 +31,7 @@ defmodule DCMetrics do
 
     * `:caller` - name of the application using the lib, in uppercase. Ex.: "WAREHOUSE"
 
-    * `:env` - environment of the application `(:prod, :staging, :sandbox, :dev, or :test)`. Defaults to `Mix.env()`.
+    * `:env` - environment of the application `(:prod, :staging, :sandbox, :dev, or :test)`.
 
     * `:disabled` - true if you want to disable the lib's functionality. Might be useful to disable it in tests, for
       example.
@@ -175,7 +175,7 @@ defmodule DCMetrics do
   end
 
   defp enviroment() do
-    case Application.get_env(:dc_metrics, :env, Mix.env()) do
+    case Application.fetch_env!(:dc_metrics, :env) do
       :prod -> "PRODUCTION"
       :staging -> "STAGING"
       :sandbox -> "SANDBOX"
