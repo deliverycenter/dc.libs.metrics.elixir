@@ -19,7 +19,7 @@ defmodule DCMetricsTest do
       ext_store_id: "ext_store_id_test",
       payload: "payload_test",
       error_code: "error_code_test",
-      duration_ms: 500,
+      duration_ms: 500
     ]
 
     {:ok, metadata: metadata}
@@ -42,7 +42,8 @@ defmodule DCMetricsTest do
           "message" => "message_test",
           "caller" => "APPLICATION_NAME",
           "environment" => "TEST",
-          "correlation_id" => "source_type_test-source_name_test-ext_root_resource_id_test-int_root_resource_id_test",
+          "correlation_id" =>
+            "source_type_test-source_name_test-ext_root_resource_id_test-int_root_resource_id_test",
           "action" => "action_test",
           "direction" => "direction_test",
           "source_type" => "source_type_test",

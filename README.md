@@ -27,15 +27,16 @@ First, set the required configs in your config file
 
 ```elixir
 config :dc_metrics,
-  grpc_url: "ADDR:PORT",
   caller: "APPLICATION_NAME",
-  env: Mix.env()
+  env: Mix.env(),
+  gcp_project_id: "project_id",
+  pubsub_topic_name: "topic_name"
 ```
 
 Then, to log an event
 
 ```elixir
-DCTracing.info("Product created with success",
+DCMetrics.info("Product created with success",
   action: "CREATE_PRODUCT",
   direction: "INCOMING",
   source_type: "PROVIDER",
