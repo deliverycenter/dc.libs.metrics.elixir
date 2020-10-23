@@ -1,42 +1,4 @@
 defmodule DCMetrics do
-  @moduledoc """
-  Elixir implementation for DeliveryCenter's structured logging format.
-
-  By default, all events will be logged to:
-
-  - Stdout, as a [Google Cloud Platform structured log](https://cloud.google.com/logging/docs/structured-logging)
-  - Metrics API, using gRPC + Protobuf
-
-  ## Levels
-
-  The supported levels are:
-
-    * `:error` - for errors
-    * `:warn` - for warnings
-    * `:info` - for information of any kind
-    * `:debug` - for debug-related messages
-
-  ## Metadata
-
-  All log operations take a argument `metadata`, which should contain all fields to be sent as a metric. The list of
-  fields and its descriptions can be found at the Confluence documentation page.
-
-  ### Runtime Configuration
-
-  All configuration below must be set via config files (such as
-  `config/config.exs`) and cannot be changed during runtime.
-
-    * `:grpc_url` - URL to the Metrics API gRPC. This may vary between environments. You can find the possible values
-      in the centralized docs.
-
-    * `:caller` - name of the application using the lib, in uppercase. Ex.: "WAREHOUSE"
-
-    * `:env` - environment of the application `(:prod, :staging, :sandbox, :dev, or :test)`.
-
-    * `:disabled` - true if you want to disable the lib's functionality. Might be useful to disable it in tests, for
-      example.
-
-  """
   require Logger
 
   alias Logging.Deliverycenter.Integration.V1.WriteMetricsRequest
