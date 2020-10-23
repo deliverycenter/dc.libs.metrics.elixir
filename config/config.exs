@@ -4,7 +4,11 @@ use Mix.Config
 
 if Mix.env() == :test do
   config :dc_metrics,
-    grpc_url: "FAKE_ADDR",
     caller: "APPLICATION_NAME",
-    env: Mix.env()
+    env: Mix.env(),
+    gcp_project_id: "local_project_id",
+    pubsub_topic_name: "topic_name"
+
+  config :goth, disabled: true
+  config :google_api_pub_sub, :base_url, "http://localhost:8681/"
 end

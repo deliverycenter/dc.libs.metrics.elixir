@@ -40,7 +40,6 @@ defmodule DCMetrics do
   require Logger
 
   alias Logging.Deliverycenter.Integration.V1.WriteMetricsRequest
-  alias Logging.Deliverycenter.Integration.V1.MetricsService.Stub, as: MetricsStub
 
   alias DCMetrics.BaseModel
 
@@ -122,7 +121,7 @@ defmodule DCMetrics do
       level: level |> to_string() |> String.upcase(),
       message: message,
       caller: caller(),
-      environment: enviroment(),
+      environment: environment(),
       correlation_id: build_correlation_id(metadata),
       create_timestamp: :os.system_time(:nanosecond),
       action: metadata[:action],
@@ -155,12 +154,23 @@ defmodule DCMetrics do
   defp make_metrics_request(%WriteMetricsRequest{} = request) do
     Task.start(fn ->
       try do
-        with {:ok, channel} <- GRPC.Stub.connect(grpc_url()),
-             {:ok, response} <- MetricsStub.write_metrics(channel, request) do
-          {:ok, response}
-        else
-          error -> error
-        end
+        message_data = prepare_pubsub_message(request)
+
+        request = %GoogleApi.PubSub.V1.Model.PublishRequest{
+          messages: [
+            %GoogleApi.PubSub.V1.Model.PubsubMessage{
+              data: message_data
+            }
+          ]
+        }
+
+        {:ok, _response} =
+          GoogleApi.PubSub.V1.Api.Projects.pubsub_projects_topics_publish(
+            pubsub_client(),
+            pubsub_project_id(),
+            pubsub_topic_name(),
+            body: request
+          )
       rescue
         _ -> :error
       end
@@ -174,7 +184,7 @@ defmodule DCMetrics do
     }
   end
 
-  defp enviroment() do
+  defp environment() do
     case Application.fetch_env!(:dc_metrics, :env) do
       :prod -> "PRODUCTION"
       :staging -> "STAGING"
@@ -184,11 +194,26 @@ defmodule DCMetrics do
     end
   end
 
-  defp grpc_url() do
-    Application.fetch_env!(:dc_metrics, :grpc_url)
-  end
-
   defp caller() do
     Application.fetch_env!(:dc_metrics, :caller)
+  end
+
+  defp prepare_pubsub_message(%WriteMetricsRequest{} = request) do
+    request
+    |> Poison.encode!()
+    |> Base.encode64()
+  end
+
+  defp pubsub_client do
+    {:ok, token} = Goth.Token.for_scope("https://www.googleapis.com/auth/pubsub")
+    GoogleApi.PubSub.V1.Connection.new(token.token)
+  end
+
+  defp pubsub_project_id do
+    Application.fetch_env!(:dc_metrics, :gcp_project_id)
+  end
+
+  defp pubsub_topic_name do
+    Application.fetch_env!(:dc_metrics, :pubsub_topic_name)
   end
 end

@@ -22,7 +22,9 @@ defmodule DCMetrics.MixProject do
   defp deps do
     [
       {:grpc, "~> 0.3.1"},
-      {:jason, "~> 1.2"}
+      {:jason, "~> 1.2"},
+      {:google_api_pub_sub, "~> 0.27.0"},
+      {:goth, "~> 1.1.0"}
     ]
   end
 end
