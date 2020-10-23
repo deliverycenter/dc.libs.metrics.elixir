@@ -1,4 +1,4 @@
-# dc.libs.metrics.elixir
+# DCMetrics Elixir
 
 Elixir implementation for DeliveryCenter's structured logging format.
 
@@ -7,7 +7,12 @@ Check also our [Golang](https://github.com/deliverycenter/dc.libs.metrics.golang
 >[Node](https://github.com/deliverycenter/dc.libs.metrics.node) and 
 >[Ruby](https://github.com/deliverycenter/dc.libs.metrics.ruby) versions.
 
-Full documentation can be found at TBD.
+By default, all events will be logged to:
+
+- Stdout, as a [Google Cloud Platform structured log](https://cloud.google.com/logging/docs/structured-logging)
+- Metrics API, using PubSub
+
+For the complete documentation, refer to the documentation page.
 
 ## Installation
 
@@ -48,4 +53,30 @@ DCMetrics.info("Product created with success",
 )
 ```
 
-Full documentation can be found at TBD.
+## Options
+
+### Levels
+
+The supported levels are:
+
+* `:error` - for errors
+* `:warn` - for warnings
+* `:info` - for information of any kind
+* `:debug` - for debug-related messages
+
+### Metadata
+
+All log operations take a argument `metadata`, which should contain all fields to be sent as a metric. The list of
+fields and its descriptions can be found at the Confluence documentation page.
+
+### Config options
+
+* `:project_id` - GCP's Project ID for the given environment.
+
+* `:pubsub_topic_name` - Name of the topic where the messages will be sent to.
+
+* `:caller` - name of the application using the lib, in uppercase. Ex.: "WAREHOUSE"
+
+* `:env` - environment of the application `(:prod, :staging, :sandbox, :dev, or :test)`. Usually you'll want to set 
+this as `Mix.env()`.
+

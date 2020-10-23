@@ -5,9 +5,15 @@ defmodule DCMetrics.MixProject do
     [
       app: :dc_metrics,
       version: "0.1.0",
+      description: description(),
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      package: package(),
+      docs: [
+        main: "readme", # The main page in the docs
+        extras: ["README.md"]
+      ]
     ]
   end
 
@@ -24,7 +30,19 @@ defmodule DCMetrics.MixProject do
       {:grpc, "~> 0.3.1"},
       {:jason, "~> 1.2"},
       {:google_api_pub_sub, "~> 0.27.0"},
-      {:goth, "~> 1.1.0"}
+      {:goth, "~> 1.1.0"},
+      {:ex_doc, "~> 0.14", only: :dev, runtime: false}
+    ]
+  end
+
+  defp description do
+    "Elixir implementation for DeliveryCenter's structured logging format."
+  end
+
+  defp package do
+    [
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/deliverycenter/dc.libs.metrics.elixir"}
     ]
   end
 end
