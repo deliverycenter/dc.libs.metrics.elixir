@@ -1,46 +1,7 @@
 defmodule DCMetrics do
-  @moduledoc """
-  Elixir implementation for DeliveryCenter's structured logging format.
-
-  By default, all events will be logged to:
-
-  - Stdout, as a [Google Cloud Platform structured log](https://cloud.google.com/logging/docs/structured-logging)
-  - Metrics API, using gRPC + Protobuf
-
-  ## Levels
-
-  The supported levels are:
-
-    * `:error` - for errors
-    * `:warn` - for warnings
-    * `:info` - for information of any kind
-    * `:debug` - for debug-related messages
-
-  ## Metadata
-
-  All log operations take a argument `metadata`, which should contain all fields to be sent as a metric. The list of
-  fields and its descriptions can be found at the Confluence documentation page.
-
-  ### Runtime Configuration
-
-  All configuration below must be set via config files (such as
-  `config/config.exs`) and cannot be changed during runtime.
-
-    * `:grpc_url` - URL to the Metrics API gRPC. This may vary between environments. You can find the possible values
-      in the centralized docs.
-
-    * `:caller` - name of the application using the lib, in uppercase. Ex.: "WAREHOUSE"
-
-    * `:env` - environment of the application `(:prod, :staging, :sandbox, :dev, or :test)`.
-
-    * `:disabled` - true if you want to disable the lib's functionality. Might be useful to disable it in tests, for
-      example.
-
-  """
   require Logger
 
   alias Logging.Deliverycenter.Integration.V1.WriteMetricsRequest
-  alias Logging.Deliverycenter.Integration.V1.MetricsService.Stub, as: MetricsStub
 
   alias DCMetrics.BaseModel
 
@@ -122,7 +83,7 @@ defmodule DCMetrics do
       level: level |> to_string() |> String.upcase(),
       message: message,
       caller: caller(),
-      environment: enviroment(),
+      environment: environment(),
       correlation_id: build_correlation_id(metadata),
       create_timestamp: :os.system_time(:nanosecond),
       action: metadata[:action],
@@ -155,12 +116,23 @@ defmodule DCMetrics do
   defp make_metrics_request(%WriteMetricsRequest{} = request) do
     Task.start(fn ->
       try do
-        with {:ok, channel} <- GRPC.Stub.connect(grpc_url()),
-             {:ok, response} <- MetricsStub.write_metrics(channel, request) do
-          {:ok, response}
-        else
-          error -> error
-        end
+        message_data = prepare_pubsub_message(request)
+
+        request = %GoogleApi.PubSub.V1.Model.PublishRequest{
+          messages: [
+            %GoogleApi.PubSub.V1.Model.PubsubMessage{
+              data: message_data
+            }
+          ]
+        }
+
+        {:ok, _response} =
+          GoogleApi.PubSub.V1.Api.Projects.pubsub_projects_topics_publish(
+            pubsub_client(),
+            pubsub_project_id(),
+            pubsub_topic_name(),
+            body: request
+          )
       rescue
         _ -> :error
       end
@@ -174,7 +146,7 @@ defmodule DCMetrics do
     }
   end
 
-  defp enviroment() do
+  defp environment() do
     case Application.fetch_env!(:dc_metrics, :env) do
       :prod -> "PRODUCTION"
       :staging -> "STAGING"
@@ -184,11 +156,26 @@ defmodule DCMetrics do
     end
   end
 
-  defp grpc_url() do
-    Application.fetch_env!(:dc_metrics, :grpc_url)
-  end
-
   defp caller() do
     Application.fetch_env!(:dc_metrics, :caller)
+  end
+
+  defp prepare_pubsub_message(%WriteMetricsRequest{} = request) do
+    request
+    |> Poison.encode!()
+    |> Base.encode64()
+  end
+
+  defp pubsub_client do
+    {:ok, token} = Goth.Token.for_scope("https://www.googleapis.com/auth/pubsub")
+    GoogleApi.PubSub.V1.Connection.new(token.token)
+  end
+
+  defp pubsub_project_id do
+    Application.fetch_env!(:dc_metrics, :gcp_project_id)
+  end
+
+  defp pubsub_topic_name do
+    Application.fetch_env!(:dc_metrics, :pubsub_topic_name)
   end
 end
