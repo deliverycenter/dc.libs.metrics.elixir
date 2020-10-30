@@ -162,7 +162,7 @@ defmodule DCMetrics do
 
   defp prepare_pubsub_message(%WriteMetricsRequest{} = request) do
     request
-    |> Poison.encode!()
+    |> WriteMetricsRequest.encode()
     |> Base.encode64()
   end
 
