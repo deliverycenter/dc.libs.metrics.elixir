@@ -31,7 +31,8 @@ defmodule DCMetrics.MixProject do
       {:jason, "~> 1.2"},
       {:google_api_pub_sub, "~> 0.27.0"},
       {:goth, "~> 1.1.0"},
-      {:ex_doc, "~> 0.14", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.14", only: :dev, runtime: false},
+      {:protobuf, "~> 0.7.1"}
     ]
   end
 
