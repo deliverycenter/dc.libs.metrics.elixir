@@ -4,7 +4,7 @@ defmodule DCMetrics.MixProject do
   def project do
     [
       app: :dc_metrics,
-      version: "0.1.0",
+      version: "0.1.1",
       description: description(),
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
