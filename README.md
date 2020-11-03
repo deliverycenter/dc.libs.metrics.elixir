@@ -38,6 +38,13 @@ config :dc_metrics,
   pubsub_topic_name: "topic_name"
 ```
 
+By default, Elixir's Logger will print colored logs, which doesn't work on GCP. To prevent it
+
+```elixir
+config :logger, 
+  :console, colors: [enabled: false]
+```
+
 Then, to log an event
 
 ```elixir
