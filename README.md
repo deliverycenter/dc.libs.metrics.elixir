@@ -21,7 +21,7 @@ This package can be installed by adding `dc_metrics` to your list of dependencie
 ```elixir
 def deps do
   [
-    {:dc_metrics, "~> 0.1.0"}
+    {:dc_metrics, "~> 0.1.2"}
   ]
 end
 ```
@@ -86,4 +86,7 @@ fields and its descriptions can be found at the Confluence documentation page.
 
 * `:env` - environment of the application `(:prod, :staging, :sandbox, :dev, or :test)`. Usually you'll want to set 
 this as `Mix.env()`.
+
+* `:disabled` - When `true` the libs behaviour is completely disabled. This can be very useful for preventing logs on 
+test environments.
 
