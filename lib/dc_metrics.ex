@@ -40,7 +40,7 @@ defmodule DCMetrics do
   """
   @spec log(level, message, metadata) :: :ok
   def log(level, message, metadata) when level in @log_levels do
-    unless disabled? do
+    unless disabled?() do
       base_model = build_base_model(level, message, metadata)
 
       log_to_stdout(base_model)
