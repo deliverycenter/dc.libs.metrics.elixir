@@ -42,8 +42,10 @@ defmodule DCMetrics do
   def log(level, message, metadata) when level in @log_levels do
     base_model = build_base_model(level, message, metadata)
 
-    log_to_stdout(base_model)
-    log_to_metrics(base_model)
+    unless disabled? do
+      log_to_stdout(base_model)
+      log_to_metrics(base_model)
+    end
 
     :ok
   end
@@ -177,5 +179,9 @@ defmodule DCMetrics do
 
   defp pubsub_topic_name do
     Application.fetch_env!(:dc_metrics, :pubsub_topic_name)
+  end
+
+  def disabled? do
+    Application.get_env(:dc_metrics, :disabled, false)
   end
 end
